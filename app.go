@@ -62,6 +62,11 @@ import (
 // vs latest=tag GitHub).
 const Version = "8.1.1"
 
+// elysiumCrossPostEnabled : false sur ce repo (build Hydracker-only). Le code
+// Elysium reste présent mais n'est jamais appelé — un seul point de divergence
+// avec le repo amont Go-Post-Tools, pour garder les merges simples.
+const elysiumCrossPostEnabled = false
+
 type App struct {
 	ctx         context.Context
 	client      *api.Client
@@ -122,7 +127,7 @@ func stripTagPrefix(tag string) string {
 // (celui du haut de la liste — GitHub trie par date de création DESC) qui
 // matche notre lignée. Retourne (tag, htmlURL, error).
 func fetchLatestForChannel(channel string) (string, string, error) {
-	req, _ := http.NewRequest("GET", "https://api.github.com/repos/Gandalfleblanc/Go-Post-Tools/releases?per_page=30", nil)
+	req, _ := http.NewRequest("GET", "https://api.github.com/repos/Gandalfleblanc/Go-Post-Tools-Hydracker/releases?per_page=30", nil)
 	req.Header.Set("Accept", "application/vnd.github+json")
 	c := &http.Client{Timeout: 10 * time.Second}
 	resp, err := c.Do(req)
@@ -200,7 +205,7 @@ func (a *App) DownloadUpdate() (string, error) {
 	emit("meta", "Récupération de la release…", 0)
 	// Récupère la liste et filtre par lignée (default/hyd) pour éviter le
 	// cross-jump entre les 2 canaux (Elysium+Hydracker vs Hydracker seul).
-	req, _ := http.NewRequest("GET", "https://api.github.com/repos/Gandalfleblanc/Go-Post-Tools/releases?per_page=30", nil)
+	req, _ := http.NewRequest("GET", "https://api.github.com/repos/Gandalfleblanc/Go-Post-Tools-Hydracker/releases?per_page=30", nil)
 	req.Header.Set("Accept", "application/vnd.github+json")
 	c := &http.Client{Timeout: 15 * time.Second}
 	resp, err := c.Do(req)
@@ -1465,7 +1470,7 @@ func (a *App) FicheGetContent(titleID int) (*FicheContent, error) {
 // Pas de dépendance à Hydracker pour l'identité — impossible d'usurper un
 // autre user même en bidouillant le token.
 
-const teamListURL = "https://raw.githubusercontent.com/Gandalfleblanc/Go-Post-Tools/main/team.json"
+const teamListURL = "https://raw.githubusercontent.com/Gandalfleblanc/Go-Post-Tools-Hydracker/main/team.json"
 
 type TeamUser struct {
 	Pseudo       string `json:"pseudo"`
@@ -3097,6 +3102,11 @@ func nfoForElysium(nfo string) string {
 //   - ddlURL : URL 1Fichier (vide = pas de DDL cross-post)
 //   - nzbPath : chemin local du .nzb (vide = pas de NZB cross-post)
 func (a *App) crossPostElysium(hydrackerTitleID, qualite int, langues, subs []string, sizeBytes int64, fileName, nfo, ddlURL, nzbPath string, fallbackTmdbID int, fallbackMediaType string) {
+	// Build Hydracker-only : cross-post désactivé à la racine. Le corps est conservé
+	// tel quel pour garder les merges depuis le repo amont possibles.
+	if !elysiumCrossPostEnabled {
+		return
+	}
 	token := strings.TrimSpace(a.cfg.ElysiumApiToken)
 	if token == "" {
 		return
@@ -4094,7 +4104,7 @@ func (a *App) downloadFile(url string) ([]byte, error) {
 		req.Header.Set("Authorization", "Bearer "+a.cfg.HydrackerToken)
 	}
 	// UA descriptif requis par le WAF Hydracker (et safe pour autres hosts)
-	req.Header.Set("User-Agent", "GoPostTools/3.0 (https://github.com/Gandalfleblanc/Go-Post-Tools)")
+	req.Header.Set("User-Agent", "GoPostTools/3.0 (https://github.com/Gandalfleblanc/Go-Post-Tools-Hydracker)")
 	c := &http.Client{Timeout: 120 * time.Second}
 	resp, err := c.Do(req)
 	if err != nil {
@@ -4410,7 +4420,7 @@ func (a *App) downloadHydrackerTorrent(torrentID int) ([]byte, error) {
 		req.Header.Set("Authorization", "Bearer "+a.cfg.HydrackerToken)
 	}
 	req.Header.Set("Accept", "application/x-bittorrent")
-	req.Header.Set("User-Agent", "GoPostTools/3.0 (https://github.com/Gandalfleblanc/Go-Post-Tools)")
+	req.Header.Set("User-Agent", "GoPostTools/3.0 (https://github.com/Gandalfleblanc/Go-Post-Tools-Hydracker)")
 	c := &http.Client{Timeout: 60 * time.Second}
 	resp, err := c.Do(req)
 	if err != nil {

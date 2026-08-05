@@ -6,7 +6,7 @@
   import { logEntries, addLog, clearLogs } from './logs.js'
   import logo from './assets/logo.png'
   import loginLogo from './assets/login-logo.png'
-  import { ListCheckTorrents, ReseedFromLihdl, ReseedPrepare, ReseedExecute, SelectAnyTorrentFile, SelectMkvFile, GetVersion, StartWatchFolder, StopWatchFolder, IsWatching, CheckForUpdate, OpenBrowser, HistoryList, HistoryDelete, HistoryStats, DownloadUpdate, HasLihdlSettingsPassword, SetLihdlSettingsPassword, VerifyLihdlSettingsPassword, ClearLihdlSettingsPassword, IsLihdlPasswordManaged, IsHydrackerURLManaged, GetEffectiveHydrackerURL, FindHydrackerSources, FicheGetContent, FicheGetNfo, GetDDLFilename, GetUploaderStats, LoginUser, Logout, GetCurrentUser, TryAutoLogin, HashPassword, GetTeamConfig, BuildTeamJSON, FetchHydrackerAvatar, ChangeMyPassword, GetNzbFilenames, DeleteSeedboxByHash, MediaSearch, HydrackerSearch, TMDBGetByImdbID, TMDBGetProviders, HydrackerGetByID, HydrackerGetByTmdbID, HydrackerGetLienByID, HydrackerGetLienDetailByID, GetDDLFilenameByLienID, DownloadToDownloads, AutoReseedFromHydracker, AutoReseedDDLFromHydracker, AutoReseedFullFromTorrent, ListReseedRequests, ListMyLiens, ListMyTorrents, ListMyNzbs, DeleteMyLien, DeleteMyTorrent, DeleteMyNzb, DeleteTorrentAndFTP, ListSeedboxHashes, GetNexumIndex, GetSeedboxNexumIndex, DebugNexumMatch, TestNexum, TestSFTP, TestAllDebrid, TestIgdb, TestElysium, UpdateMyLien, UpdateMyTorrent, GetMetaQualities, ListTitlesSorted, GetUserProfile, ParseFilename, Notify } from '../wailsjs/go/main/App.js'
+  import { ListCheckTorrents, ReseedFromLihdl, ReseedPrepare, ReseedExecute, SelectAnyTorrentFile, SelectMkvFile, GetVersion, StartWatchFolder, StopWatchFolder, IsWatching, CheckForUpdate, OpenBrowser, HistoryList, HistoryDelete, HistoryStats, DownloadUpdate, HasLihdlSettingsPassword, SetLihdlSettingsPassword, VerifyLihdlSettingsPassword, ClearLihdlSettingsPassword, IsLihdlPasswordManaged, IsHydrackerURLManaged, GetEffectiveHydrackerURL, FindHydrackerSources, FicheGetContent, FicheGetNfo, GetDDLFilename, GetUploaderStats, LoginUser, Logout, GetCurrentUser, TryAutoLogin, HashPassword, GetTeamConfig, BuildTeamJSON, FetchHydrackerAvatar, ChangeMyPassword, GetNzbFilenames, DeleteSeedboxByHash, MediaSearch, HydrackerSearch, TMDBGetByImdbID, TMDBGetProviders, HydrackerGetByID, HydrackerGetByTmdbID, HydrackerGetLienByID, HydrackerGetLienDetailByID, GetDDLFilenameByLienID, DownloadToDownloads, AutoReseedFromHydracker, AutoReseedDDLFromHydracker, AutoReseedFullFromTorrent, ListReseedRequests, ListMyLiens, ListMyTorrents, ListMyNzbs, DeleteMyLien, DeleteMyTorrent, DeleteMyNzb, DeleteTorrentAndFTP, ListSeedboxHashes, GetNexumIndex, GetSeedboxNexumIndex, DebugNexumMatch, TestNexum, TestSFTP, TestAllDebrid, TestIgdb, UpdateMyLien, UpdateMyTorrent, GetMetaQualities, ListTitlesSorted, GetUserProfile, ParseFilename, Notify } from '../wailsjs/go/main/App.js'
 
   // --- Tabs (réorganisés par workflow, 8 onglets principaux) ---
   const TABS = [
@@ -1924,17 +1924,6 @@
     </button>
     <div class="brand">
       <img src={logo} alt="" class="brand-logo" />
-      <!-- Logo Elysium inline SVG, même largeur que Hydracker (78px) -->
-      <svg class="brand-logo-elysium" viewBox="0 0 78 78" xmlns="http://www.w3.org/2000/svg" title="Cross-post Elysium">
-        <defs>
-          <linearGradient id="elyGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#ff9a3c"/>
-            <stop offset="1" stop-color="#e6631a"/>
-          </linearGradient>
-        </defs>
-        <rect x="18" y="18" width="42" height="42" rx="4" fill="url(#elyGrad)" transform="rotate(45 39 39)"/>
-        <text x="39" y="72" text-anchor="middle" fill="#ffffff" font-family="-apple-system,Helvetica Neue,sans-serif" font-size="10" font-weight="700" letter-spacing="1.5">ELYSIUM</text>
-      </svg>
       {#if !sidebarCollapsed}
         <div class="logo">GO Post Tools</div>
         {#if appVersion}<div class="brand-version">v{appVersion}</div>{/if}
@@ -3662,7 +3651,7 @@
               </div>
               <div class="mgr-modal-footer">
                 <button class="btn-test" on:click={() => { navigator.clipboard.writeText(outputJSON); }}>📋 Recopier</button>
-                <button class="btn-save" on:click={() => { OpenBrowser('https://github.com/Gandalfleblanc/Go-Post-Tools/edit/main/team.json'); outputOpen = false }}>
+                <button class="btn-save" on:click={() => { OpenBrowser('https://github.com/Gandalfleblanc/Go-Post-Tools-Hydracker/edit/main/team.json'); outputOpen = false }}>
                   Ouvrir sur GitHub →
                 </button>
               </div>
@@ -3816,23 +3805,6 @@
               <label>Twitch Client Secret</label>
               <input type="password" bind:value={cfg.igdb_client_secret} placeholder="client secret" />
               <div class="field-hint">Active la recherche de jeux vidéo (toggle 🎮 Jeu dans l'onglet Hydracker). Crée une app sur console.twitch.tv → Applications → Enregistrer (gratuit), puis colle le Client ID + Secret.</div>
-            </div>
-          </div>
-
-          <div class="section">
-            <div class="section-header">
-              <span>Elysium (cross-post)</span>
-              <button class="btn-test" on:click={() => runTest('elysium', async () => ({ ok: true, message: await TestElysium(cfg.elysium_api_token) }))}>
-                {#if testLoading.elysium}…{:else}Tester{/if}
-              </button>
-            </div>
-            {#if testResults.elysium}
-              <div class="test-result" class:ok={testResults.elysium.ok}>{testResults.elysium.message}</div>
-            {/if}
-            <div class="field">
-              <label>Token API Elysium</label>
-              <input type="password" bind:value={cfg.elysium_api_token} placeholder="els_..." />
-              <div class="field-hint">Après un post Hydracker réussi, cross-post automatique sur Elysium (URL 1Fichier + fichier NZB). Send.now non transmis. Génère ton token sur <a href="https://elysium-les5zamis.com/account-settings" target="_blank" style="color:var(--accent)">elysium-les5zamis.com/account-settings</a> section API tokens. Vide = pas de cross-post.</div>
             </div>
           </div>
 
@@ -4248,13 +4220,6 @@
     user-select: none;
     -webkit-user-drag: none;
   }
-  .brand-logo-elysium {
-    width: 78px; height: 78px;
-    filter: drop-shadow(0 0 14px rgba(255, 140, 40, 0.45));
-    user-select: none;
-    -webkit-user-drag: none;
-  }
-  .sidebar.collapsed .brand-logo-elysium { width: 36px; height: 36px; }
   .logo {
     font-size: 12px; font-weight: 700;
     letter-spacing: 2.4px;
