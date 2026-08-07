@@ -60,7 +60,7 @@ import (
 // IMPORTANT : doit être en sync avec wails.json `productVersion`. Si tu bump
 // l'un, bump l'autre — sinon l'auto-update boucle (compare current=Version
 // vs latest=tag GitHub).
-const Version = "1.0.0"
+const Version = "1.0.1"
 
 // elysiumCrossPostEnabled : false sur ce repo (build Hydracker-only). Le code
 // Elysium reste présent mais n'est jamais appelé — un seul point de divergence
@@ -4518,6 +4518,11 @@ func (a *App) PostNzbWorkflow(titleID, qualite int, langues, subs []string, mkvP
 	})
 	if err != nil {
 		return nil, fmt.Errorf("nyuu: %w", err)
+	}
+	// Post terminé mais des incidents ont été absorbés (nyuu code 32) : le NZB est
+	// exploitable, on ne bloque pas — mais l'utilisateur doit le savoir.
+	if result.Warnings != "" {
+		wailsruntime.EventsEmit(a.ctx, "nzb:status", "⚠️ Post terminé avec des incidents ignorés :\n"+result.Warnings)
 	}
 
 	// 4. Nettoyage par2
