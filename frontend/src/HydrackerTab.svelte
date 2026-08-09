@@ -586,6 +586,15 @@
     } else if (has1080pHDLight && isH265) {
       // 1080p.HDLight + H265 → HDLight 1080p x265 systématique
       qualID = findQual('hdlight', '1080p', 'x265') || findQual('hdlight', 'x265') || 50
+    } else if (is2160p && isH265 && !/\bremux\b/i.test(name)) {
+      // 2160p + H265 non-REMUX, PAS déjà pris par la règle 4KLight au-dessus
+      // (donc bitrate ≥ 8000 ou pas de "4klight" dans le nom) → ULTRA HD (x265) #53.
+      // Recherche stricte pour éviter de retomber sur Ultra HDLight (x265) #60.
+      const o = qualityOptions.find(q => {
+        const n = q.name.toLowerCase().replace(/[\s-]/g, '')
+        return n.includes('ultrahd') && n.includes('x265') && !n.includes('light')
+      })
+      qualID = o?.id || 53
     } else if (/\bweb([-.]?(?:rip|dl))?\b/.test(name) || name.includes('.web.')) {
       // WEB 1080p prioritaire si résolution présente (films ET séries)
       const is1080p = /\b1080p\b/i.test(file.name)
