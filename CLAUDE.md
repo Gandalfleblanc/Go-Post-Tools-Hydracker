@@ -1,5 +1,24 @@
 # CLAUDE.md
 
+> # 🟩 LIGNE HYDRACKER-ONLY — versions 1.x
+>
+> | | |
+> |---|---|
+> | Dossier | `/Users/gandalf/go-post-tools-hydracker` |
+> | Repo | `Gandalfleblanc/Go-Post-Tools-Hydracker` |
+> | Tags | `vX.Y.Z` (1.x) |
+> | Public | utilisateurs qui n'ont **que** Hydracker |
+> | Cross-post Elysium | **désactivé** (`elysiumCrossPostEnabled = false`) |
+>
+> L'autre ligne vit dans `/Users/gandalf/go-post-tools` (versions **8.x**, avec
+> Elysium). Les deux dossiers sont indépendants : ne jamais ajouter ici de remote
+> vers l'autre repo, ni de branche de l'autre ligne.
+>
+> **Divergences à conserver lors d'un report de correctif depuis la ligne 8.x :**
+> `elysiumCrossPostEnabled = false` · URLs updater et `teamListURL` pointées sur
+> `Go-Post-Tools-Hydracker` · aucune UI Elysium dans `App.svelte` /
+> `HydrackerTab.svelte`.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project
